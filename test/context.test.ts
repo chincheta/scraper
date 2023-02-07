@@ -106,6 +106,8 @@ describe('failure scraper-context tests', () => {
         await scraper.close();
     }, 30000);
 
+
+
     test('middle click on invisible', async () => {
         const html = `
         <html>
@@ -241,6 +243,17 @@ describe('context tests', () => {
 
         await context.click('//*[@id="exampleModalLive"]//button[normalize-space()="Close"]', { expectNavigation: false });
         expect(await context.isVisible('//*[@id="exampleModalLive"]')).toBeFalsy();
+        await scraper.destroyContext(context);
+    }, 30000);
+
+    test('scrolls into view', async () => {
+        let context = await scraper.createContext('https://getbootstrap.com/docs/4.0/components/modal/');
+
+        let oldY = await context.page.evaluate(() => window.pageYOffset);
+        await context.scrollIntoView('//h3[normalize-space()="Scrolling long content"]');
+        let newY = await context.page.evaluate(() => window.pageYOffset);
+        expect(newY).toBeGreaterThan(oldY);
+
         await scraper.destroyContext(context);
     }, 30000);
 

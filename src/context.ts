@@ -183,10 +183,31 @@ export default class ScraperContext {
         }
     }
 
+    async scrollIntoView(xpath: string){
+        await this.ensureActiveTab();
+        if (await this.contains(xpath, this.timeout)) {
+            let elements: ElementHandle<Node>[] = await this.page.$x(xpath);
+            if (elements.length > 1) {
+                throw new Error(`Multiple elements found for ${xpath}. Refine xpath.`);
+            }
+
+            if (elements.length === 0) {
+                throw new Error(`No element found for ${xpath}. Refine xpath.`);
+            }
+
+            await this.page.evaluate(el => {
+                (el as HTMLElement).scrollIntoView();
+            }, elements[0]);
+        } else {
+            throw new Error(`Cannot scroll element into view for ${xpath}.`);
+        }
+    }
+
     async click(xpath: string, options?: { expectNavigation?: boolean }) {
         await this.ensureActiveTab();
         if (await this.contains(xpath, this.timeout)) {
             let elements: ElementHandle<Node>[] = await this.page.$x(xpath);
+
             elements = await this.filterDisplayed(elements);
 
             let clickable: ElementHandle<HTMLElement> | undefined = undefined;

@@ -21,7 +21,7 @@ describe('yahoo finance tests', () => {
         let context = await scraper.createContext('https://finance.yahoo.com/');
 
         await context.type('Tesla', '//input[@id="yfin-usr-qry"]');
-        await context.click('//*[@id="result-quotes-0"]');
+        await context.click('//*[@data-id="result-quotes-0"]');
         await context.clickIfExists('//button[normalize-space()="Maybe later"]', { expectNavigation: false });
 
         await context.click('//*[@id="quote-nav"]//a[normalize-space()="Summary"]');
@@ -73,7 +73,7 @@ describe('yahoo finance tests', () => {
         let context = await scraper.createContext("https://finance.yahoo.com/calendar/earnings");
 
         await context.type('Microsoft', '//*[@placeholder="Find earnings for symbols"]');
-        await context.click('(//*[@id="result-quotes-0"])');
+        await context.click('(//*[@data-id="result-quotes-0"])');
         let dateTimes = await context.scrapeMany('//*[@id="fin-cal-table"]//tr//td[3]//span[1]');
         let zones = await context.scrapeMany('//*[@id="fin-cal-table"]//tr//td[3]//span[2]');
         let translation: Record<string, string> = {
@@ -99,6 +99,8 @@ describe('yahoo finance tests', () => {
 
         for (let i = 0; i < dateTimes.length; i++) {
             let s = dateTimes[i] + " " + translation[zones[i]];
+            // replace like-space chars by spaces
+            s = s.replace(/[\u00A0\u1680​\u180e\u2000-\u2009\u200a​\u200b​\u202f\u205f​\u3000]/g, ' ')
             // Oct 28, 2022, 2 AM Europe/Berlin
             var date = DateTime.fromFormat(s, "MMM dd, yyyy, h a z");
             if (date < now) {
