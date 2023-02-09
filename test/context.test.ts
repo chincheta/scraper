@@ -269,6 +269,25 @@ describe('context tests', () => {
         await scraper.destroyContext(context);
     }, 30000);
 
+    test('scrapes visible / invisible', async () => {
+        const html = `
+        <html>
+            <body>
+                <div>a</div>
+                <div style="display:none">b</div>
+                <div>c</div>
+                <div>d</div>
+            </body>
+        </html>`;
+
+        let context = await scraper.createContext(`data:text/html,${html}`);
+        let divs = await context.scrapeMany('//div');
+        expect(divs.length).toBe(3);
+        divs = await context.scrapeMany('//div', {includeInvisible: true});
+        expect(divs.length).toBe(4);
+        await scraper.destroyContext(context);
+    }, 30000);
+
     test('wait', async () => {
         const html = `
         <html>

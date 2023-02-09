@@ -332,29 +332,31 @@ export default class ScraperContext {
         return table;
     }
 
-    async scrapeOne(xpath: string): Promise<string> {
+    async scrapeOne(xpath: string, options?: { includeInvisible?: boolean }): Promise<string> {
         await this.ensureActiveTab();
-        let result = await this.scrapeMany(xpath);
+        let result = await this.scrapeMany(xpath, options);
         if (result.length === 0) {
             throw new Error(`No element found for xpath=${xpath}`);
         }
         return result[0];
     }
 
-    async scrapeAttributesOne(xpath: string): Promise<Record<string, string | null>> {
+    async scrapeAttributesOne(xpath: string, options?: { includeInvisible?: boolean }): Promise<Record<string, string | null>> {
         await this.ensureActiveTab();
-        let result = await this.scrapeAttributesMany(xpath);
+        let result = await this.scrapeAttributesMany(xpath, options);
         if (result.length === 0) {
             throw new Error(`No element found for xpath=${xpath}`);
         }
         return result[0];
     }
 
-    async scrapeAttributesMany(xpath: string): Promise<Record<string, string | null>[]> {
+    async scrapeAttributesMany(xpath: string, options?: { includeInvisible?: boolean }): Promise<Record<string, string | null>[]> {
         await this.ensureActiveTab();
         await this.page.waitForXPath(xpath, { timeout: this.timeout });
         let elements = await this.page.$x(xpath);
-        elements = await this.filterDisplayed(elements);
+        if(!options?.includeInvisible === true){
+            elements = await this.filterDisplayed(elements);
+        }
         const promises = [];
         let labels: Record<string, string | null>[] = [];
 
@@ -374,12 +376,14 @@ export default class ScraperContext {
         return labels;
     }
 
-    async scrapeMany(xpath: string): Promise<string[]> {
+    async scrapeMany(xpath: string, options?: { includeInvisible?: boolean }): Promise<string[]> {
         await this.ensureActiveTab();
         await this.page.waitForXPath(xpath, { timeout: this.timeout });
         let elements = await this.page.$x(xpath);
 
-        elements = await this.filterDisplayed(elements);
+        if(!options?.includeInvisible === true){
+            elements = await this.filterDisplayed(elements);
+        }
 
         const promises = [];
         let labels: string[] = [];

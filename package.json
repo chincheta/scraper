@@ -1,6 +1,6 @@
 {
   "name": "@chincheta/scraper",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "A stealth scraper built over puppeteer.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,7 +25,7 @@
     "@types/jest": "^29.4.0",
     "@types/luxon": "^3.2.0",
     "dotenv": "^16.0.3",
-    "jest": "^29.4.1",
+    "jest": "^29.4.2",
     "luxon": "^3.2.1",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
