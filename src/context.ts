@@ -203,12 +203,14 @@ export default class ScraperContext {
         }
     }
 
-    async click(xpath: string, options?: { expectNavigation?: boolean }) {
+    async click(xpath: string, options?: { expectNavigation?: boolean, includeInvisible?: boolean }) {
         await this.ensureActiveTab();
         if (await this.contains(xpath, this.timeout)) {
             let elements: ElementHandle<Node>[] = await this.page.$x(xpath);
 
-            elements = await this.filterDisplayed(elements);
+            if(!options?.includeInvisible === true){
+                elements = await this.filterDisplayed(elements);
+            }
 
             let clickable: ElementHandle<HTMLElement> | undefined = undefined;
 
@@ -236,7 +238,7 @@ export default class ScraperContext {
         }
     }
 
-    async clickIfExists(xpath: string, options?: { expectNavigation?: boolean }): Promise<boolean> {
+    async clickIfExists(xpath: string, options?: { expectNavigation?: boolean, includeInvisible?: boolean }): Promise<boolean> {
         await this.ensureActiveTab();
         try {
             await this.click(xpath, options);

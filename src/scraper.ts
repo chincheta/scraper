@@ -77,9 +77,12 @@ export default class Scraper {
 
         await page.bringToFront();
         await page.setExtraHTTPHeaders({ 'Accept-Language': 'en' });
-        await Promise.all([
-            page.waitForNavigation(),
-            page.goto(url)]);
+
+        await page.goto(url, { waitUntil: 'domcontentloaded' });
+
+        // await Promise.all([
+        //     page.waitForNavigation(),
+        //     page.goto(url)]);
         return page;
     }
 };
