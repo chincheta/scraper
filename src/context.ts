@@ -229,10 +229,15 @@ export default class ScraperContext {
             if (options?.expectNavigation !== false) {
                 promises.push(this.page.waitForNavigation({ timeout: this.timeout }));
             }
-            promises.push(clickable.click({ delay: 100 }));
+            promises.push(clickable.click());
 
-
-            await Promise.all(promises);
+            try {
+                // workaround for the stupid bug of waitForNavigation never returning when all is idle
+                // await Promise.all.all(promises.map(p => p.catch(e => e)));    
+                await Promise.allSettled(promises);    
+            } catch (error) {
+                
+            }
         } else {
             throw new Error(`Cannot perform click for ${xpath}.`);
         }

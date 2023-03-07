@@ -1,6 +1,6 @@
 {
   "name": "@chincheta/scraper",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "description": "A stealth scraper built over puppeteer.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
